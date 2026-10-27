@@ -1,0 +1,6 @@
+{
+  "meta": {
+    "title": "Plugin Star Radar",
+    "description": "Ranks DSH plugins by GitHub stars. A plugin is listed once it has 3,000+ stars or 100k+ npm downloads in 30 days, and it stays listed after its rank drops."
+  }
+}

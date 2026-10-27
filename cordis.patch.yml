@@ -1,0 +1,6 @@
+# dsh-plugin-star-radar bundle patch: inserts its host row into a profile's
+# layer stack. The web half is loaded from exports["./client"] because
+# package.json declares dsh.client.platform = web.
+- insert:
+    - id: plugin-radar
+      name: dsh-plugin-star-radar

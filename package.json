@@ -1,0 +1,106 @@
+{
+  "name": "dsh-plugin-star-radar",
+  "version": "3.0.0",
+  "description": "插件热度榜：按 GitHub 收藏数排名 DSH 插件，收藏 ≥ 3,000 或近 30 天下载 ≥ 10 万的插件会被收录，掉出前排也找得到。 · Star-ranked DSH plugin radar with a sticky inclusion rule.",
+  "icon": "icon.svg",
+  "type": "module",
+  "main": "lib/index.js",
+  "license": "MIT",
+  "author": "Moon-Cold-Sir <2413338083@qq.com>",
+  "homepage": "https://github.com/Moon-Cold-Sir/dsh-plugin-star-radar#readme",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Moon-Cold-Sir/dsh-plugin-star-radar.git"
+  },
+  "bugs": {
+    "url": "https://github.com/Moon-Cold-Sir/dsh-plugin-star-radar/issues"
+  },
+  "keywords": [
+    "deepseek",
+    "deepseek-harness",
+    "dsh",
+    "dsh-plugin",
+    "plugin-market",
+    "github-stars",
+    "npm-downloads",
+    "leaderboard"
+  ],
+  "exports": {
+    ".": "./lib/index.js",
+    "./client": "./lib/client.js",
+    "./cordis.patch.yml": "./cordis.patch.yml",
+    "./locale/*.json": "./locale/*.json",
+    "./icon": "./icon.svg",
+    "./package.json": "./package.json"
+  },
+  "files": [
+    "lib",
+    "docs",
+    "locale",
+    "icon.svg",
+    "cordis.patch.yml",
+    "README.md",
+    "README.zh.md",
+    "LICENSE"
+  ],
+  "engines": {
+    "node": ">=20.0.0",
+    "dsh": ">=0.2.0-rc.1 <0.3.0-0 || >=0.2.1-0 <0.3.0-0"
+  },
+  "dsh": {
+    "manifestVersion": 1,
+    "bundle": {
+      "patch": "./cordis.patch.yml"
+    },
+    "client": {
+      "platform": "web",
+      "immediately": true,
+      "inject": [
+        "@deepseek-ai/dsh-client-ui-settings",
+        "@deepseek-ai/dsh-client-ui-plugin-manager"
+      ]
+    },
+    "compatibility": {
+      "dsh": ">=0.2.0-rc.1 <0.3.0-0 || >=0.2.1-0 <0.3.0-0",
+      "dshReleases": {
+        "0.2.1-rc.3": "compatible",
+        "0.2.1-rc.2": "compatible",
+        "0.2.0-rc.2": "compatible",
+        "0.2.0-rc.1": "compatible"
+      }
+    }
+  },
+  "dshhub": {
+    "schemaVersion": 1,
+    "displayName": "插件热度榜",
+    "summary": "按 GitHub 收藏数排名 DSH 插件；收藏 ≥ 3,000 或近 30 天下载 ≥ 10 万即收录，附环境/权限提示，可一键安装。",
+    "categories": [
+      "插件市场",
+      "界面",
+      "数据"
+    ],
+    "surfaces": [
+      "host",
+      "web"
+    ],
+    "capabilities": {
+      "provides": []
+    },
+    "compatibility": {
+      "dsh": ">=0.2.0-rc.1 <0.3.0-0 || >=0.2.1-0 <0.3.0-0",
+      "node": ">=20"
+    },
+    "permissions": {
+      "network": [
+        "https://awesome-dsh-plugin.com",
+        "https://registry.npmjs.org"
+      ]
+    }
+  },
+  "scripts": {
+    "build": "node scripts/build-client.mjs",
+    "check": "node --check lib/index.js && node --check lib/service.js && node --check lib/core.js && node --check lib/fetcher.js && node --check lib/client.js",
+    "test": "node --test \"test/*.test.mjs\"",
+    "live": "node scripts/live-check.mjs"
+  }
+}
