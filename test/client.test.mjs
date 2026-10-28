@@ -184,4 +184,5 @@ test('the bundle ships the three ranking metrics', () => {
   }
   assert.ok(source.includes('/dsh-plugin-star-radar/api'), 'bundle should call the renamed API')
   assert.ok(source.includes('https?'), 'links should be scheme-checked in the browser too')
+  assert.ok(source.includes('scrollIntoView'), 'group chips should navigate to their section')
 })

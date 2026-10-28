@@ -650,6 +650,9 @@
 
 .dpr-tier-section {
   margin-top: 18px;
+  /* The group chips scroll to these sections; keep the sticky toolbar from
+     covering the heading. */
+  scroll-margin-top: 76px;
 }
 
 .dpr-tier-head {

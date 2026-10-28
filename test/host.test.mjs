@@ -21,11 +21,12 @@ function mockRes() {
   }
 }
 
-function mockReq({ method = 'GET', url = '/dsh-plugin-star-radar/api/state', body = '', headers = {} } = {}) {
+function mockReq({ method = 'GET', url = '/dsh-plugin-star-radar/api/state', body = '', headers = {}, remoteAddress = '127.0.0.1' } = {}) {
   const req = Readable.from(body === '' ? [] : [body])
   req.method = method
   req.url = url
   req.headers = { host: '127.0.0.1:64370', ...headers }
+  req.socket = { remoteAddress }
   return req
 }
 
@@ -125,7 +126,7 @@ test('a cross-origin install is refused', async () => {
   assert.equal(service.installed, '')
 })
 
-test('a request with no origin is refused unless the browser says same-origin', async () => {
+test('a local request without an origin is accepted (desktop shell)', async () => {
   const service = mockService()
   const bare = await call(handleRequest.bind(null, service), mockReq({
     method: 'POST',
@@ -133,7 +134,7 @@ test('a request with no origin is refused unless the browser says same-origin', 
     body: JSON.stringify({ package: 'demo-plugin' }),
     headers: { 'content-type': 'application/json' },
   }))
-  assert.equal(bare.response.statusCode, 403)
+  assert.equal(bare.response.statusCode, 200)
 
   const labelled = await call(handleRequest.bind(null, service), mockReq({
     method: 'POST',
@@ -142,6 +143,38 @@ test('a request with no origin is refused unless the browser says same-origin', 
     headers: { 'content-type': 'application/json', 'sec-fetch-site': 'same-origin' },
   }))
   assert.equal(labelled.response.statusCode, 200)
+})
+
+test('an origin-less request from another machine is still refused', async () => {
+  const service = mockService()
+  const result = await call(handleRequest.bind(null, service), mockReq({
+    method: 'POST',
+    url: '/dsh-plugin-star-radar/api/refresh',
+    body: '{}',
+    headers: { host: '192.168.1.7:64370' },
+    remoteAddress: '192.168.1.9',
+  }))
+  assert.equal(result.response.statusCode, 403)
+})
+
+test('an opaque origin is refused, and a same-host referer is accepted', async () => {
+  const service = mockService()
+  const opaque = await call(handleRequest.bind(null, service), mockReq({
+    method: 'POST',
+    url: '/dsh-plugin-star-radar/api/refresh',
+    body: '{}',
+    headers: { origin: 'null' },
+  }))
+  assert.equal(opaque.response.statusCode, 403)
+
+  const referer = await call(handleRequest.bind(null, service), mockReq({
+    method: 'POST',
+    url: '/dsh-plugin-star-radar/api/refresh',
+    body: '{}',
+    headers: { referer: 'http://127.0.0.1:64370/settings' },
+    remoteAddress: '192.168.1.9',
+  }))
+  assert.equal(referer.response.statusCode, 200)
 })
 
 test('a cross-site fetch metadata label is refused even with a matching origin', async () => {
