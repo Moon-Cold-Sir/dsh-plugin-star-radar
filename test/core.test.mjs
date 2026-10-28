@@ -7,6 +7,7 @@ import {
   formatNumber,
   formatWan,
   inclusionOf,
+  mergeRetained,
   normalizeCatalog,
   safeHttpUrl,
   starBuckets,
@@ -214,4 +215,34 @@ test('unsafe links never reach the page', () => {
   })
   assert.equal(snapshot.items[0].repo, '')
   assert.equal(snapshot.items[0].icon, '')
+})
+
+test('mergeRetained appends dropped plugins in their own bucket', () => {
+  const base = buildSnapshot({
+    entries: normalizeCatalog([row('active', 4000, 0)]),
+    window: null,
+    host: HOST,
+    catalogMeta: null,
+    installedNames: new Set(),
+    minStars: 3000,
+    minDownloads: 100000,
+  })
+  const dropped = {
+    ...base.items[0],
+    package: 'dropped',
+    id: 'dropped',
+    name: 'dropped',
+    stars: 100,
+    last30: 0,
+    retained: true,
+    lastQualifiedAt: '2026-09-01T00:00:00.000Z',
+  }
+  const merged = mergeRetained(base, [dropped])
+  assert.equal(merged.items.length, 2)
+  assert.equal(merged.items[1].bucket, 'retained')
+  assert.equal(merged.items[1].rank, 2)
+  assert.equal(merged.stats.included, 1)
+  assert.equal(merged.stats.retained, 1)
+  assert.ok(merged.buckets.some(bucket => bucket.key === 'retained'))
+  assert.equal(mergeRetained(base, []).stats.retained, 0)
 })

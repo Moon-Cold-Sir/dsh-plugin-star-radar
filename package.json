@@ -1,6 +1,6 @@
 {
   "name": "dsh-plugin-star-radar",
-  "version": "3.0.1",
+  "version": "3.2.0",
   "description": "插件热度榜：按 GitHub 收藏数排名 DSH 插件，收藏 ≥ 3,000 或近 30 天下载 ≥ 10 万的插件会被收录，掉出前排也找得到。 · Star-ranked DSH plugin radar with a sticky inclusion rule.",
   "icon": "icon.svg",
   "type": "module",

@@ -41,7 +41,7 @@ const CATALOG = [
   },
 ]
 
-async function setup({ dependencies = { 'pkg-b': '1.0.0' }, config = {} } = {}) {
+async function setup({ dependencies = { 'pkg-b': '1.0.0' }, config = {}, catalog = CATALOG } = {}) {
   const dir = await fs.mkdtemp(path.join(os.tmpdir(), 'dpr-star-'))
   const profile = path.join(dir, 'profile')
   await fs.mkdir(profile, { recursive: true })
@@ -58,7 +58,7 @@ async function setup({ dependencies = { 'pkg-b': '1.0.0' }, config = {} } = {}) 
       calls.catalog += 1
       return {
         notModified: false,
-        plugins: CATALOG,
+        plugins: catalog,
         categories: { ui: { zh: '界面', en: 'UI' }, tools: { zh: '工具', en: 'Tools' } },
         updated: '2026-10-26',
         etag: 'etag-1',
@@ -228,4 +228,64 @@ test('a build-approval request is surfaced instead of reported as success', asyn
   assert.equal(result.ok, false)
   assert.equal(result.code, 'build-approval-required')
   assert.match(result.detail, /esbuild/)
+})
+
+test('a plugin that stops qualifying is retained instead of disappearing', async t => {
+  const catalog = [{ ...CATALOG[0] }]
+  const { dir, service } = await setup({ catalog })
+  t.after(() => cleanup(dir))
+
+  const first = await service.refresh()
+  assert.equal(first.stats.included, 1)
+  assert.equal(first.stats.retained, 0)
+
+  // The market no longer lists it (or it fell below both thresholds).
+  catalog.length = 0
+  catalog.push({ ...CATALOG[2] })
+
+  const second = await service.refresh({ force: true })
+  assert.equal(second.stats.included, 0)
+  assert.equal(second.stats.retained, 1)
+  const kept = second.items.find(item => item.package === 'pkg-a')
+  assert.ok(kept, 'the dropped plugin should still be on the board')
+  assert.equal(kept.retained, true)
+  assert.equal(kept.bucket, 'retained')
+  assert.equal(kept.stars, 1200, 'it keeps its last measured numbers')
+  assert.ok(second.buckets.some(bucket => bucket.key === 'retained'))
+
+  const cache = JSON.parse(await fs.readFile(path.join(dir, 'profile', '.dsh-plugin-radar', 'retained.json'), 'utf8'))
+  assert.ok(cache.entries['pkg-a'], 'the roster is persisted across restarts')
+})
+
+test('a retained plugin becomes active again when it re-qualifies', async t => {
+  const catalog = [{ ...CATALOG[0] }]
+  const { dir, service } = await setup({ catalog })
+  t.after(() => cleanup(dir))
+  await service.refresh()
+  catalog.length = 0
+  catalog.push({ ...CATALOG[2] })
+  const dropped = await service.refresh({ force: true })
+  assert.equal(dropped.stats.retained, 1)
+
+  catalog.push({ ...CATALOG[0] })
+  const back = await service.refresh({ force: true })
+  assert.equal(back.stats.included, 1)
+  assert.equal(back.stats.retained, 0)
+  assert.equal(back.items[0].retained, undefined)
+})
+
+test('retention expires after retainDays', async t => {
+  const catalog = [{ ...CATALOG[0] }]
+  const { dir, service } = await setup({ catalog })
+  t.after(() => cleanup(dir))
+  await service.refresh()
+  catalog.length = 0
+  catalog.push({ ...CATALOG[2] })
+  await service.refresh({ force: true })
+  assert.equal(service.snapshot.stats.retained, 1)
+
+  service.retainedCache['pkg-a'].lastQualifiedAt = new Date(Date.now() - 200 * 86400000).toISOString()
+  const expired = await service.refresh({ force: true })
+  assert.equal(expired.stats.retained, 0)
+  assert.equal(expired.items.find(item => item.package === 'pkg-a'), undefined)
 })

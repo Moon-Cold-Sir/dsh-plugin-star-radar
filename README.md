@@ -7,7 +7,7 @@ It answers one question: **which DSH plugins are people actually paying attentio
 - Ranked by **GitHub stars**;
 - Every card also shows **npm downloads over the last 30 days**, and you can re-sort by that;
 - **3000+ stars OR 100k+ downloads in 30 days** gets a plugin **listed**;
-- Once listed, a plugin **stays listed** even after its rank drops — the difference between this and a plain leaderboard.
+- Once listed, a plugin **stays listed** even after it falls below both thresholds: it moves to a labelled `已跌出 · 保留` group for `retainDays` (180 by default) with its last measured numbers, so it is still findable months later.
 
 ![Plugin radar board](./docs/light.jpg)
 
@@ -72,6 +72,7 @@ In the profile's `cordis.patch.yml`:
 | --- | --- | --- |
 | `minStars` | `3000` | star count that gets a plugin listed |
 | `minDownloads` | `100000` | 30-day download count that gets a plugin listed |
+| `retainDays` | `180` | days a plugin stays visible after falling below both thresholds |
 | `intervalHours` | `6` | background refresh interval (1–168) |
 | `catalogTtlHours` | `12` | market index cache |
 | `metaTtlHours` | `24` | npm manifest cache |

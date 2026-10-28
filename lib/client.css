@@ -1832,3 +1832,12 @@
 .dpr-metric-star {
   color: var(--dpr-warn);
 }
+
+.dpr-card[data-retained="true"] {
+  border-style: dashed;
+  opacity: 0.9;
+}
+
+.dpr-card[data-retained="true"]::before {
+  opacity: 0.35;
+}
