@@ -157,15 +157,23 @@ test('an origin-less request from another machine is still refused', async () =>
   assert.equal(result.response.statusCode, 403)
 })
 
-test('an opaque origin is refused, and a same-host referer is accepted', async () => {
+test('an opaque origin is pulled apart: JSON from loopback passes, a form post does not', async () => {
   const service = mockService()
   const opaque = await call(handleRequest.bind(null, service), mockReq({
     method: 'POST',
     url: '/dsh-plugin-star-radar/api/refresh',
     body: '{}',
-    headers: { origin: 'null' },
+    headers: { origin: 'null', 'content-type': 'application/json' },
   }))
-  assert.equal(opaque.response.statusCode, 403)
+  assert.equal(opaque.response.statusCode, 200)
+
+  const opaqueForm = await call(handleRequest.bind(null, service), mockReq({
+    method: 'POST',
+    url: '/dsh-plugin-star-radar/api/refresh',
+    body: '{}',
+    headers: { origin: 'null', 'content-type': 'text/plain' },
+  }))
+  assert.equal(opaqueForm.response.statusCode, 403)
 
   const referer = await call(handleRequest.bind(null, service), mockReq({
     method: 'POST',
