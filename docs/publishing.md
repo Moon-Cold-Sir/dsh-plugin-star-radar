@@ -4,6 +4,19 @@
 
 DSH **没有官方插件市场**（官方 `plugin-market` bundle 的 README 写得很清楚：「Discover 只列出用户自己添加的索引源」）。所以「上架」实际上是**进社区索引**，主要就是 [awesome-dsh-plugin.com](https://awesome-dsh-plugin.com) 这一个——它同时提供 `plugins.json`，也正是本插件的数据源。
 
+## 当前收录状态（2026-10-30）
+
+| 项 | 状态 |
+| --- | --- |
+| awesome PR | [#9928](https://github.com/awesome-dsh-plugin/awesome-dsh-plugin/pull/9928) 已于 **2026-10-28 20:21 合并**（合并后被 close 属正常） |
+| 条目文件 | `data/plugins/Moon-Cold-Sir__dsh-plugin-star-radar.yml`，维护者按实现把措辞调成「排名下滑后仍保留 180 天」，与本文件模板一致 |
+| 站点索引 | `plugins.json` 于 **2026-10-29** 重建收录，`npm` 字段已自动关联；`version`/`downloads` 是抓取快照，会滞后于 npm |
+| npm | `dsh-plugin-star-radar@3.2.0`，`latest` 已指向 |
+| 安装命令 | `dsh plugin --profile web add dsh-plugin-star-radar` |
+
+发新版只需要 `npm publish`；条目本身不用改（除非换仓库名、分类或描述）。站点下次重建后，索引里的版本号会自动跟上。
+
+
 ---
 
 ## 0. 发布前检查

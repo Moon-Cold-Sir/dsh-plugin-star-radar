@@ -1,18 +1,16 @@
-# awesome-dsh-plugin 条目：把本文件内容复制成
+# 提 PR 用的条目模板。内容已与线上合并版本保持一致：
 #   data/plugins/Moon-Cold-Sir__dsh-plugin-star-radar.yml
-# 然后向 https://github.com/awesome-dsh-plugin/awesome-dsh-plugin 提 PR。
-# 字段以该仓库 data/plugins/ 里已有条目与 contributing.md 为准。
+# 需要再次提交或修改条目时，把下面内容复制到 awesome-dsh-plugin 仓库的同名文件。
 url: https://github.com/Moon-Cold-Sir/dsh-plugin-star-radar
 name: Moon-Cold-Sir/dsh-plugin-star-radar
 category: market
 description:
   en: >-
     Star-ranked radar for DSH plugins. A plugin is listed once it has 3,000+
-    GitHub stars or 100k+ npm downloads in 30 days, and it stays listed after
-    both thresholds, it stays for 180 days with its last numbers, so it is still
-    findable months later. Rankings default
-    to stars, with the 30-day download count and a download sort beside it.
+    GitHub stars or 100k+ npm downloads in 30 days; after its rank drops it
+    stays listed for 180 days by default, so a plugin is still findable for
+    months after a hot streak.
   zh: >-
     按 GitHub 收藏数排名的 DSH 插件热度榜：收藏 ≥ 3,000 或近 30 天下载 ≥ 10 万即收录，
-    收录后不会因排名下滑被移出，几个月后依然找得到。默认按收藏排序，同时给出近 30 天下载量与下载排序。
+    排名下滑后仍保留 180 天（默认），热度过去几个月依然找得到。
 icon: https://raw.githubusercontent.com/Moon-Cold-Sir/dsh-plugin-star-radar/main/docs/icon-180.png
